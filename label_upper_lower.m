@@ -1,4 +1,5 @@
 % script to get the indices of lower and upper CL
+% now generalised to get indices of all lipids
 
 clear
 
