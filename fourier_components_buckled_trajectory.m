@@ -17,9 +17,9 @@ frame_dt=10;
 end_frame=20000;
 
 %nlipids = [104 384 24];      buckling = 0.9;
-%nlipids = [104 384 24];      buckling = 0.7;
+nlipids = [104 384 24];      buckling = 0.7;
 %nlipids = [120 384 8];      buckling = 0.7;
-nlipids = [120 384 8];      buckling = 0.9;
+%nlipids = [120 384 8];      buckling = 0.9;
 
 numbeads = [13 13 25];
 
@@ -75,8 +75,10 @@ x_CL_ind = [];
 frame=-1;
 
 Fourier_coeff=[];
-Fourier_coeff_CL=[];
-tails_x_CL=[];
+Fourier_coeff_CLu=[];
+Fourier_coeff_CLl=[];
+tails_x_CLu=[];
+tails_x_CLl=[];
 time = [];
 while(notdone && frame <= end_frame)
     
@@ -98,11 +100,14 @@ while(notdone && frame <= end_frame)
     tails_x = FR.coord_XYZ(indT,1);
     %    tails_x_CL = FR.coord_XYZ(x_CL_ind,1);
     for nl=1:length(upCLheads); %NOTE need to be split in 2 cases if different #CL in leaflets
-        tails_x_CL = [tails_x_CL; mean(FR.coord_XYZ(upCLtails{nl},1)); mean(FR.coord_XYZ(lwCLtails{nl},1))];
+        %tails_x_CL = [tails_x_CL; mean(FR.coord_XYZ(upCLtails{nl},1)); mean(FR.coord_XYZ(lwCLtails{nl},1))];
+        tails_x_CLu = [tails_x_CLu; mean(FR.coord_XYZ(upCLtails{nl},1))];
+        tails_x_CLl = [tails_x_CLl; mean(FR.coord_XYZ(lwCLtails{nl},1))];
     end
     
     Fourier_coeff = [Fourier_coeff; F_nx(0,tails_x) F_nx(1,tails_x) F_nx(-1,tails_x) F_nx(2,tails_x) F_nx(-2,tails_x) F_nx(3,tails_x) F_nx(-3,tails_x) F_nx(4,tails_x) F_nx(-4,tails_x) F_nx(6,tails_x) F_nx(-6,tails_x) F_nx(8,tails_x) F_nx(-8,tails_x)];
-    Fourier_coeff_CL = [Fourier_coeff_CL; F_nx(0,tails_x_CL) F_nx(1,tails_x_CL) F_nx(-1,tails_x_CL) F_nx(2,tails_x_CL) F_nx(-2,tails_x_CL) F_nx(3,tails_x_CL) F_nx(-3,tails_x_CL) F_nx(4,tails_x_CL) F_nx(-4,tails_x_CL) F_nx(6,tails_x_CL) F_nx(-6,tails_x_CL) F_nx(8,tails_x_CL) F_nx(-8,tails_x_CL)];
+    Fourier_coeff_CLu = [Fourier_coeff_CLu; F_nx(0,tails_x_CLu) F_nx(1,tails_x_CLu) F_nx(-1,tails_x_CLu) F_nx(2,tails_x_CLu) F_nx(-2,tails_x_CLu) F_nx(3,tails_x_CLu) F_nx(-3,tails_x_CLu) F_nx(4,tails_x_CLu) F_nx(-4,tails_x_CLu) F_nx(6,tails_x_CLu) F_nx(-6,tails_x_CLu) F_nx(8,tails_x_CLu) F_nx(-8,tails_x_CLu)];
+    Fourier_coeff_CLl = [Fourier_coeff_CLl; F_nx(0,tails_x_CLl) F_nx(1,tails_x_CLl) F_nx(-1,tails_x_CLl) F_nx(2,tails_x_CLl) F_nx(-2,tails_x_CLl) F_nx(3,tails_x_CLl) F_nx(-3,tails_x_CLl) F_nx(4,tails_x_CLl) F_nx(-4,tails_x_CLl) F_nx(6,tails_x_CLl) F_nx(-6,tails_x_CLl) F_nx(8,tails_x_CLl) F_nx(-8,tails_x_CLl)];
     % read next frame if there is one
     FR=trrReadFrame(FS);
     notdone=isfield(FR,'coord_XYZ');
@@ -124,18 +129,29 @@ plot(time, sqrt(Fourier_coeff(:,8) .* Fourier_coeff(:,9)), 'm')
 plot(time, sqrt(Fourier_coeff(:,12) .* Fourier_coeff(:,13)), 'g')
 xlabel('time [ns]')
 ylabel('Fourier coeffcients')
-legend('c_1', 'c_2', 'c_3', 'c_4', 'c_8')
+legend('c_1', 'c_2', 'c_3', 'c_4', 'c_8', 'Location', 'NorthWestOutside')
 
 figure(438)
 clf
-plot(time, sqrt(Fourier_coeff_CL(:,2) .* Fourier_coeff_CL(:,3)), 'b'), hold on
-plot(time, sqrt(Fourier_coeff_CL(:,4) .* Fourier_coeff_CL(:,5)), 'r')
-plot(time, sqrt(Fourier_coeff_CL(:,6) .* Fourier_coeff_CL(:,7)), 'k')
-plot(time, sqrt(Fourier_coeff_CL(:,8) .* Fourier_coeff_CL(:,9)), 'm')
-plot(time, sqrt(Fourier_coeff_CL(:,12) .* Fourier_coeff_CL(:,13)), 'g')
+plot(time, sqrt(Fourier_coeff_CLu(:,2) .* Fourier_coeff_CLu(:,3)), 'b'), hold on
+plot(time, sqrt(Fourier_coeff_CLu(:,4) .* Fourier_coeff_CLu(:,5)), 'r')
+plot(time, sqrt(Fourier_coeff_CLu(:,6) .* Fourier_coeff_CLu(:,7)), 'k')
+plot(time, sqrt(Fourier_coeff_CLu(:,8) .* Fourier_coeff_CLu(:,9)), 'm')
+plot(time, sqrt(Fourier_coeff_CLu(:,12) .* Fourier_coeff_CLu(:,13)), 'g')
 xlabel('time [ns]')
-ylabel('Fourier coeffcients_CL')
-legend('c_1', 'c_2', 'c_3', 'c_4', 'c_8')
+ylabel('Fourier coeffcients CL upper/lower')
+legend('c_1', 'c_2', 'c_3', 'c_4', 'c_8', 'Location', 'NorthWestOutside')
+
+%figure(439)
+%clf
+plot(time, sqrt(Fourier_coeff_CLl(:,2) .* Fourier_coeff_CLl(:,3)), 'b--'), hold on
+plot(time, sqrt(Fourier_coeff_CLl(:,4) .* Fourier_coeff_CLl(:,5)), 'r--')
+plot(time, sqrt(Fourier_coeff_CLl(:,6) .* Fourier_coeff_CLl(:,7)), 'k--')
+plot(time, sqrt(Fourier_coeff_CLl(:,8) .* Fourier_coeff_CLl(:,9)), 'm--')
+plot(time, sqrt(Fourier_coeff_CLl(:,12) .* Fourier_coeff_CLl(:,13)), 'g--')
+xlabel('time [ns]')
+%ylabel('Fourier coeffcients CL lower')
+%legend('c_1', 'c_2', 'c_3', 'c_4', 'c_8', 'Location', 'NorthWestOutside')
 
 
 
